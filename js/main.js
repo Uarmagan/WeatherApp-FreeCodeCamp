@@ -1,7 +1,20 @@
 //global variables
 var long, lat;
-var isCel = false;
-var tempLetter;
+var isCel = true;
+var temp;
+var tempLetter = 'C';
+var today = new Date();
+var time = function() {
+  if (today.getHours() < 12) {
+    return today.getHours() + ":" + today.getMinutes() + " AM";
+  } else {
+    if (today.getHours() >= 13) {
+      return today.getHours() - 12 + ":" + today.getMinutes() + " PM";
+    } else {
+      return today.getHours() + ":" + today.getMinutes() + " PM";
+    }
+  }
+}
 
 $(document).ready(function() {
   //get the geolocation of user
@@ -26,31 +39,48 @@ function getWeather(long, lat) {
     console.log(data);
 
     $('.picture').append($('<img>').attr('src', data.weather[0].icon).css({
-      width: '9em',
+      width: '10em',
       height: 'auto'
     }));
 
-    $('.weather').append($('<p></p>').append(data.weather[0].description + ' & ' + changeTemp(data.main.temp)+ ' °' + tempLetter).css({
-      'font-size': '2em',
-      'margin-bottom': '0'
+    temp = changeTemp(data.main.temp);
+    $('.weather').append($('<p></p>').addClass('temp').append(temp + ' °' + tempLetter).css({
+      'font-size': '3em'
+    }));
+
+    $('.weather').append($('<p></p>').append(data.weather[0].description).css({
+      'font-size': '3em'
     }));
 
     $('.weather').append($('<p></p>').append('In ' + data.name + ', ' + data.sys.country).css({
-      'font-size': '1em',
-      'margin': '0'
+      'font-size': '1.5em',
+      'margin-top': '.5em'
     }));
+
+    $('.weather').append($('<p></p>').append(time).css({
+      'font-size': '2em',
+      'margin-top': '.5em'
+    }));
+
+    $('#changeIt').append(tempLetter);
   })
 };
 
+$('#changeIt').click(function() {
+  $('.temp').html(changeTemp(temp) + ' °' + tempLetter);
+});
+
 function changeTemp(deg) {
-  if (isCel = true) {
     temp = Math.floor(((deg * 9) / 5) + 32);
-    isCel = false
-    tempLetter = 'F'
+  let temptemp = 0;
+  if (isCel === true) {
+    temptemp = Math.floor(((deg * 9) / 5) + 32);
+    isCel = false;
+    tempLetter = 'F';
   } else {
-    temp = Math.floor(((deg - 32) * 5) / 9);
+    temptemp = Math.floor(((deg - 32) * 5) / 9);
     isCel = true;
-    tempLetter = 'C'
+    tempLetter = 'C';
   }
-  return temp;
+  return temptemp;
 }

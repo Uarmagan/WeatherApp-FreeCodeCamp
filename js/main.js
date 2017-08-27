@@ -1,17 +1,18 @@
 //global variables
 var long, lat;
-var isCel = true;
-var temp;
 var tempLetter = 'C';
 var today = new Date();
 var time = function() {
-  if (today.getHours() < 12) {
-    return today.getHours() + ":" + today.getMinutes() + " AM";
+  var hours = today.getHours();
+  var minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
+
+  if (hours < 12) {
+    return hours + ":" + minutes + " AM";
   } else {
-    if (today.getHours() >= 13) {
-      return today.getHours() - 12 + ":" + today.getMinutes() + " PM";
+    if (hours >= 13) {
+      return hours - 12 + ":" + minutes + " PM";
     } else {
-      return today.getHours() + ":" + today.getMinutes() + " PM";
+      return hours + ":" + minutes + " PM";
     }
   }
 }
@@ -38,15 +39,15 @@ function getWeather(long, lat) {
   }).done(function(data) {
     console.log(data);
 
+
     $('.picture').append($('<img>').attr('src', data.weather[0].icon).css({
       width: '10em',
       height: 'auto'
     }));
 
-    temp = changeTemp(data.main.temp);
-    $('.weather').append($('<p></p>').addClass('temp').append(temp + ' °' + tempLetter).css({
-      'font-size': '3em'
-    }));
+    $('#tempNum').text(Math.floor(data.main.temp) + String.fromCharCode(176));
+    $('#tempUnit').text(tempLetter);
+
 
     $('.weather').append($('<p></p>').append(data.weather[0].description).css({
       'font-size': '3em'
@@ -61,26 +62,25 @@ function getWeather(long, lat) {
       'font-size': '2em',
       'margin-top': '.5em'
     }));
-
-    $('#changeIt').append(tempLetter);
   })
 };
-
 $('#changeIt').click(function() {
-  $('.temp').html(changeTemp(temp) + ' °' + tempLetter);
-});
+  let temp = Math.floor(parseInt($('#tempNum').text()));
+  let unit = $('#tempUnit').text();
 
-function changeTemp(deg) {
-    temp = Math.floor(((deg * 9) / 5) + 32);
-  let temptemp = 0;
-  if (isCel === true) {
-    temptemp = Math.floor(((deg * 9) / 5) + 32);
-    isCel = false;
-    tempLetter = 'F';
-  } else {
-    temptemp = Math.floor(((deg - 32) * 5) / 9);
-    isCel = true;
-    tempLetter = 'C';
+  $('#changeIt').text(unit);
+
+  if (unit === 'C') {
+    // C to F
+    temp = ((temp * 9) / 5) + 32;
+    $('#tempNum').text(Math.floor(temp) + String.fromCharCode(176));
+    $('#tempUnit').text('F');
   }
-  return temptemp;
-}
+  else {
+    // F to C
+    temp = ((temp - 32) * 5) / 9;
+    $('#tempNum').text(Math.floor(temp) + String.fromCharCode(176));
+    $('#tempUnit').text('C');
+  }
+
+});

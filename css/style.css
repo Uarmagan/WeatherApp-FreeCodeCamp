@@ -10,6 +10,7 @@ body {
   background-repeat: no-repeat;
   color: white;
   margin:0;
+
 }
 
 .container {
@@ -28,6 +29,9 @@ body {
 }
 .weather * {
   margin: 0;
+}
+.temp{
+  font-size: 3em;
 }
 #changeIt{
   width: 3.7em;
